@@ -9,7 +9,7 @@ extern int ma_period_1 = 8; // first moving average period
 extern int ma_period_2 = 50; // second moving average period
 extern int ma_period_3 = 200; // third moving average period
 extern int adx_period = 14; // ADX period
-extern double adx_threshold = 15.0; // ADX threshold
+extern double adx_threshold = 20.0; // ADX threshold
 
 // Define global variables
 double ma_1, ma_2, ma_3, adx;
@@ -62,17 +62,22 @@ void OnTick()
         }
     }
     
+    double accountBalance = AccountBalance();
+    double riskPercentage = 10.0;
+    
+    double lotSize = (accountBalance * riskPercentage / 100) / 10000;
+    
     // Check for entry signal for short position
     if (ma_2 < ma_3 && adx > adx_threshold)
     {
         // Enter short position
-        OrderSend(Symbol(), OP_SELL, 0.1, Bid, 3, 0, 0, "MA crossover", MagicNumber, 0, Red);
+        OrderSend(Symbol(), OP_SELL, lotSize, Bid, 3, 0, 0, "MA crossover", MagicNumber, 0, Red);
     }
     
     // Check for entry signal for long position
     if (ma_3 < ma_2 && adx > adx_threshold)
     {
         // Enter long position
-        OrderSend(Symbol(), OP_BUY, 0.1, Ask, 3, 0, 0, "MA crossover", MagicNumber, 0, Blue);
+        OrderSend(Symbol(), OP_BUY, lotSize, Ask, 3, 0, 0, "MA crossover", MagicNumber, 0, Blue);
     }
 }
